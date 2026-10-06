@@ -1,0 +1,36 @@
+from pydantic_settings import BaseSettings
+from fastapi import HTTPException
+
+class Settings(BaseSettings):
+    APP_NAME: str = ""
+    BACKEND_KEY: str
+    DEEPSEEK_API_KEY: str
+    LANGFUSE_SECRET_KEY: str
+    LANGFUSE_PUBLIC_KEY: str
+    LITELLM_API_KEY: str
+    LITELLM_VIRTUAL_KEY: str = ""
+
+    MAX_REQUEST_LENGTH: int = 2000
+    MAX_FILE_SIZE_MB: int = 10
+    MAX_FILE_ROWS: int = 1_000_000
+
+    LITELLM_POSTGRES_USER: str
+    LITELLM_POSTGRES_PASSWORD: str
+    LITELLM_POSTGRES_DB: str
+
+    LANGFUSE_POSTGRES_USER: str
+    LANGFUSE_POSTGRES_PASSWORD: str
+    LANGFUSE_POSTGRES_DB: str
+
+    NEXTAUTH_SECRET: str
+    SALT: str
+
+    class Config():
+        env_file = ".env"
+        case_sensitive = True
+
+settings = Settings()
+
+def validate_key(backend_key: str):
+    if backend_key != settings.BACKEND_KEY:
+        raise HTTPException(status_code=403, detail="Forbidden: BACKEND_KEY is invalid")
